@@ -1,4 +1,4 @@
-# Task Manager
+# Task Manager App
 
 A responsive Task Manager web application built using HTML, CSS, and JavaScript.
 
