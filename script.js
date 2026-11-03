@@ -1,218 +1,596 @@
-const Form = document.querySelector('#task-form');
-const Input = document.querySelector('#task-input');
-const List = document.querySelector('#task-list');
-const Message = document.querySelector('#message');
-const Search = document.querySelector('#search-input');
+// 1. SELECT HTML ELEMENTS
 
-const AllBtn = document.querySelector('#all-btn');
-const completedBtn = document.querySelector('#completed-btn');
-const PendingBtn = document.querySelector('#pending-btn');
+// Navigation buttons
+const DailyTab = document.querySelector("#daily-tab");
+const MonthlyTab = document.querySelector("#monthly-tab");
 
-const TotalCount = document.querySelector('#total-count');
-const CompletedCount = document.querySelector('#completed-count');
-const PendingCount = document.querySelector('#pending-count');
+// Task sections
+const DailySection = document.querySelector("#daily-section");
+const MonthlySection = document.querySelector("#monthly-section");
 
-// Load saved tasks
-const savedTasks = localStorage.getItem("tasks");
-let tasks = JSON.parse(savedTasks) || [];
+// 2. DAILY TASK SYSTEM
 
-let editingTask = null;
-let currentFilter = "all";
+const DailyForm = document.querySelector("#daily-form");
+const DailyInput = document.querySelector("#daily-input");
+const DailyList = document.querySelector("#daily-task-list");
+const DailyMessage = document.querySelector("#daily-message");
+const DailySearch = document.querySelector("#daily-search");
 
-// Save tasks in LocalStorage
-function saveTasks() {
-localStorage.setItem("tasks", JSON.stringify(tasks));
+const DailyAllBtn = document.querySelector("#daily-all-btn");
+const DailyCompletedBtn = document.querySelector("#daily-completed-btn");
+const DailyPendingBtn = document.querySelector("#daily-pending-btn");
+
+const DailyTotalCount = document.querySelector("#daily-total-count");
+const DailyCompletedCount = document.querySelector("#daily-completed-count");
+const DailyPendingCount = document.querySelector("#daily-pending-count");
+
+// 3. MONTHLY TASK SYSTEM
+
+const MonthlyForm = document.querySelector("#monthly-form");
+const MonthlyInput = document.querySelector("#monthly-input");
+const MonthlyList = document.querySelector("#monthly-task-list");
+const MonthlyMessage = document.querySelector("#monthly-message");
+const MonthlySearch = document.querySelector("#monthly-search");
+
+const MonthlyAllBtn = document.querySelector("#monthly-all-btn");
+const MonthlyCompletedBtn = document.querySelector("#monthly-completed-btn");
+const MonthlyPendingBtn = document.querySelector("#monthly-pending-btn");
+
+const MonthlyTotalCount = document.querySelector("#monthly-total-count");
+const MonthlyCompletedCount = document.querySelector("#monthly-completed-count");
+const MonthlyPendingCount = document.querySelector("#monthly-pending-count");
+
+// 4. DATE SYSTEM FOR DAILY TASKS
+
+// Local date generate karna
+function getCurrentDate() {
+
+const date = new Date();
+
+const year = date.getFullYear();
+const month = String(date.getMonth() + 1).padStart(2, "0");
+const day = String(date.getDate()).padStart(2, "0");
+
+return `${year}-${month}-${day}`;
+
 }
 
-// Display individual task
-function renderTask(taskData) {
+// Last saved date
+const savedDate = localStorage.getItem("dailyTaskDate");
+
+const currentDate = getCurrentDate();
+
+// Check whether a new day has started
+if (savedDate !== currentDate) {
+
+// Reset only daily tasks
+localStorage.setItem("dailyTasks", JSON.stringify([]));
+
+// Update saved date
+localStorage.setItem("dailyTaskDate", currentDate);
+
+}
+
+// 5. LOAD TASKS FROM LOCAL STORAGE
+
+// Daily tasks
+let dailyTasks = JSON.parse(
+localStorage.getItem("dailyTasks")
+) || [];
+
+// Monthly tasks
+let monthlyTasks = JSON.parse(
+localStorage.getItem("monthlyTasks")
+) || [];
+
+// Editing task references
+let dailyEditingTask = null;
+let monthlyEditingTask = null;
+
+// Current filters
+let dailyCurrentFilter = "all";
+let monthlyCurrentFilter = "all";
+
+// 6. SAVE TASKS
+
+function saveDailyTasks() {
+
+localStorage.setItem(
+    "dailyTasks",
+    JSON.stringify(dailyTasks)
+);
+
+}
+
+function saveMonthlyTasks() {
+
+localStorage.setItem(
+    "monthlyTasks",
+    JSON.stringify(monthlyTasks)
+);
+
+}
+
+// 7. TASK COUNTER
+
+function updateTaskCounter(
+tasks,
+totalCount,
+completedCount,
+pendingCount
+) {
+
+const total = tasks.length;
+
+const completed = tasks.filter((task) => {
+    return task.completed === true;
+}).length;
+
+const pending = tasks.filter((task) => {
+    return task.completed === false;
+}).length;
+
+totalCount.textContent = `Total: ${total}`;
+
+completedCount.textContent = `Completed: ${completed}`;
+
+pendingCount.textContent = `Pending: ${pending}`;
+
+}
+
+// 8. GENERIC TASK RENDERING SYSTEM
+
+function renderTask(taskData, list, onUpdate, onDelete, onEdit) {
 
 const task = document.createElement("li");
 
 const taskText = document.createElement("span");
+
 taskText.textContent = taskData.text;
 
+
+// Completed task styling
 if (taskData.completed) {
+
     task.classList.add("completed");
+
 }
 
-// Complete / Undo Button
+
+// Complete / Undo button
 const completeBtn = document.createElement("button");
 
 completeBtn.textContent = taskData.completed
     ? "Undo"
     : "Complete";
 
+completeBtn.type = "button";
+
 completeBtn.addEventListener("click", () => {
 
     taskData.completed = !taskData.completed;
 
-    saveTasks();
-    displayTasks();
+    onUpdate();
+
 });
 
-// Edit Button
+
+// Edit button
 const editBtn = document.createElement("button");
+
 editBtn.textContent = "Edit";
+
+editBtn.type = "button";
 
 editBtn.addEventListener("click", () => {
 
-    Input.value = taskData.text;
-    editingTask = taskData;
+    onEdit(taskData);
 
-    Input.focus();
-
-    Message.textContent = "Editing task...";
 });
 
-// Delete Button
+
+// Delete button
 const deleteBtn = document.createElement("button");
+
 deleteBtn.textContent = "Delete";
+
+deleteBtn.type = "button";
 
 deleteBtn.addEventListener("click", () => {
 
-    tasks = tasks.filter((item) => item !== taskData);
+    onDelete(taskData);
 
-    if (editingTask === taskData) {
-        editingTask = null;
-        Input.value = "";
-        Message.textContent = "";
-    }
-
-    saveTasks();
-    displayTasks();
 });
 
-task.append(taskText, completeBtn, editBtn, deleteBtn);
 
-List.append(task);
+task.append(
+    taskText,
+    completeBtn,
+    editBtn,
+    deleteBtn
+);
+
+list.append(task);
 
 }
 
-// Combined Search + Filter Function
-function displayTasks() {
+// 9. DAILY TASK DISPLAY
 
-const searchText = Search.value.toLowerCase();
+function displayDailyTasks() {
 
-const filteredTasks = tasks.filter((task) => {
+const searchText = DailySearch.value.toLowerCase();
+
+const filteredTasks = dailyTasks.filter((task) => {
 
     const matchesSearch = task.text
         .toLowerCase()
         .includes(searchText);
 
     const matchesFilter =
-        currentFilter === "all" ||
-        (currentFilter === "completed" && task.completed) ||
-        (currentFilter === "pending" && !task.completed);
+        dailyCurrentFilter === "all" ||
+        (dailyCurrentFilter === "completed" && task.completed) ||
+        (dailyCurrentFilter === "pending" && !task.completed);
 
     return matchesSearch && matchesFilter;
+
 });
 
-List.innerHTML = "";
+
+DailyList.innerHTML = "";
+
 
 filteredTasks.forEach((taskData) => {
-    renderTask(taskData);
+
+    renderTask(
+        taskData,
+        DailyList,
+
+        // Update task
+        () => {
+            saveDailyTasks();
+            displayDailyTasks();
+        },
+
+        // Delete task
+        (selectedTask) => {
+
+            dailyTasks = dailyTasks.filter((item) => {
+                return item !== selectedTask;
+            });
+
+            if (dailyEditingTask === selectedTask) {
+
+                dailyEditingTask = null;
+                DailyInput.value = "";
+                DailyMessage.textContent = "";
+
+            }
+
+            saveDailyTasks();
+            displayDailyTasks();
+
+        },
+
+        // Edit task
+        (selectedTask) => {
+
+            DailyInput.value = selectedTask.text;
+
+            dailyEditingTask = selectedTask;
+
+            DailyInput.focus();
+
+            DailyMessage.textContent = "Editing task...";
+
+        }
+
+    );
+
 });
 
-function updateTaskCounter() {
 
-    // Total tasks count
-    const totalTask = tasks.length;
+updateTaskCounter(
+    dailyTasks,
+    DailyTotalCount,
+    DailyCompletedCount,
+    DailyPendingCount
+);
 
-    // Completed tasks count
-    const completedTasks = tasks.filter((task) => {
-        return task.completed === true;
-    });
-
-    console.log(completedTasks.length);
-
-    // Pending tasks count
-    const pendingTasks = tasks.filter((task) => {
-        return task.completed === false;
-    });
-
-    console.log(pendingTasks.length);
-
-    // HTML update using textContent
-    TotalCount.textContent = `Total: ${totalTask}`;
-    CompletedCount.textContent = `Completed: ${completedTasks.length}`;
-    PendingCount.textContent = `Pending: ${pendingTasks.length}`;
-}
-
-updateTaskCounter();
 
 }
 
-// Initial Display
-displayTasks();
+// 10. MONTHLY TASK DISPLAY
 
-// Form Submit Event
-Form.addEventListener("submit", (event) => {
+function displayMonthlyTasks() {
+
+const searchText = MonthlySearch.value.toLowerCase();
+
+const filteredTasks = monthlyTasks.filter((task) => {
+
+    const matchesSearch = task.text
+        .toLowerCase()
+        .includes(searchText);
+
+    const matchesFilter =
+        monthlyCurrentFilter === "all" ||
+        (monthlyCurrentFilter === "completed" && task.completed) ||
+        (monthlyCurrentFilter === "pending" && !task.completed);
+
+    return matchesSearch && matchesFilter;
+
+});
+
+
+MonthlyList.innerHTML = "";
+
+
+filteredTasks.forEach((taskData) => {
+
+    renderTask(
+        taskData,
+        MonthlyList,
+
+        // Update task
+        () => {
+            saveMonthlyTasks();
+            displayMonthlyTasks();
+        },
+
+        // Delete task
+        (selectedTask) => {
+
+            monthlyTasks = monthlyTasks.filter((item) => {
+                return item !== selectedTask;
+            });
+
+            if (monthlyEditingTask === selectedTask) {
+
+                monthlyEditingTask = null;
+                MonthlyInput.value = "";
+                MonthlyMessage.textContent = "";
+
+            }
+
+            saveMonthlyTasks();
+            displayMonthlyTasks();
+
+        },
+
+        // Edit task
+        (selectedTask) => {
+
+            MonthlyInput.value = selectedTask.text;
+
+            monthlyEditingTask = selectedTask;
+
+            MonthlyInput.focus();
+
+            MonthlyMessage.textContent = "Editing task...";
+
+        }
+
+    );
+
+});
+
+
+updateTaskCounter(
+    monthlyTasks,
+    MonthlyTotalCount,
+    MonthlyCompletedCount,
+    MonthlyPendingCount
+);
+
+}
+
+// 11. DAILY FORM SUBMIT
+
+DailyForm.addEventListener("submit", (event) => {
 
 event.preventDefault();
 
-const taskText = Input.value.trim();
+const taskText = DailyInput.value.trim();
+
 
 if (taskText === "") {
-    Message.textContent = "Please enter a task!";
+
+    DailyMessage.textContent = "Please enter a task!";
+
     return;
+
 }
 
-if (editingTask !== null) {
 
-    editingTask.text = taskText;
+// Edit existing task
+if (dailyEditingTask !== null) {
 
-    editingTask = null;
+    dailyEditingTask.text = taskText;
 
-    Message.textContent = "Task updated successfully!";
+    dailyEditingTask = null;
 
-} else {
+    DailyMessage.textContent = "Task updated successfully!";
 
-    const newTask = {
+}
+
+// Add new task
+else {
+
+    dailyTasks.push({
+
         text: taskText,
+
         completed: false
-    };
 
-    tasks.push(newTask);
+    });
 
-    Message.textContent = "";
+    DailyMessage.textContent = "";
+
 }
 
-saveTasks();
-displayTasks();
 
-Input.value = "";
+saveDailyTasks();
 
-});
+displayDailyTasks();
 
-// Search Event
-Search.addEventListener("input", () => {
-displayTasks();
-});
-
-// All Tasks Button
-AllBtn.addEventListener("click", () => {
-
-currentFilter = "all";
-
-displayTasks();
+DailyInput.value = "";
 
 });
 
-// Completed Tasks Button
-completedBtn.addEventListener("click", () => {
+// 12. MONTHLY FORM SUBMIT
 
-currentFilter = "completed";
+MonthlyForm.addEventListener("submit", (event) => {
 
-displayTasks();
+event.preventDefault();
+
+const taskText = MonthlyInput.value.trim();
+
+
+if (taskText === "") {
+
+    MonthlyMessage.textContent = "Please enter a task!";
+
+    return;
+
+}
+
+
+// Edit existing task
+if (monthlyEditingTask !== null) {
+
+    monthlyEditingTask.text = taskText;
+
+    monthlyEditingTask = null;
+
+    MonthlyMessage.textContent = "Task updated successfully!";
+
+}
+
+// Add new task
+else {
+
+    monthlyTasks.push({
+
+        text: taskText,
+
+        completed: false
+
+    });
+
+    MonthlyMessage.textContent = "";
+
+}
+
+
+saveMonthlyTasks();
+
+displayMonthlyTasks();
+
+MonthlyInput.value = "";
 
 });
 
-// Pending Tasks Button
-PendingBtn.addEventListener("click", () => {
+// 13. DAILY SEARCH AND FILTER
 
-currentFilter = "pending";
+DailySearch.addEventListener("input", () => {
 
-displayTasks();
+displayDailyTasks();
 
 });
+
+DailyAllBtn.addEventListener("click", () => {
+
+dailyCurrentFilter = "all";
+
+displayDailyTasks();
+
+});
+
+DailyCompletedBtn.addEventListener("click", () => {
+
+dailyCurrentFilter = "completed";
+
+displayDailyTasks();
+
+});
+
+DailyPendingBtn.addEventListener("click", () => {
+
+dailyCurrentFilter = "pending";
+
+displayDailyTasks();
+
+});
+
+// 14. MONTHLY SEARCH AND FILTER
+
+MonthlySearch.addEventListener("input", () => {
+
+displayMonthlyTasks();
+
+});
+
+MonthlyAllBtn.addEventListener("click", () => {
+
+monthlyCurrentFilter = "all";
+
+displayMonthlyTasks();
+
+});
+
+MonthlyCompletedBtn.addEventListener("click", () => {
+
+monthlyCurrentFilter = "completed";
+
+displayMonthlyTasks();
+
+});
+
+MonthlyPendingBtn.addEventListener("click", () => {
+
+monthlyCurrentFilter = "pending";
+
+displayMonthlyTasks();
+
+});
+
+// 15. NAVIGATION / TAB SWITCHING
+
+// Daily tab
+DailyTab.addEventListener("click", () => {
+
+DailySection.classList.add("active");
+
+MonthlySection.classList.remove("active");
+
+
+DailyTab.classList.add("active");
+
+MonthlyTab.classList.remove("active");
+
+});
+
+// Monthly tab
+MonthlyTab.addEventListener("click", () => {
+
+MonthlySection.classList.add("active");
+
+DailySection.classList.remove("active");
+
+
+MonthlyTab.classList.add("active");
+
+DailyTab.classList.remove("active");
+
+});
+
+// 16. INITIAL DISPLAY
+
+// Show Daily Tasks by default
+DailySection.classList.add("active");
+
+DailyTab.classList.add("active");
+
+// Display saved tasks
+displayDailyTasks();
+
+displayMonthlyTasks();

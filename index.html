@@ -1,42 +1,159 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>My Task Manager</title>
+
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+
 </head>
+
 <body>
     <div class="container">
+
+        <!-- Main Heading -->
         <h1>My Task Manager</h1>
 
-        <form id="task-form">
-            <input type="text" id="task-input" placeholder="Enter a new task...">
-            <button type="submit">Add Task</button>
-        </form>
+        <!-- Navigation Buttons: Switch between Daily and Monthly Tasks -->
+        <div id="task-navigation">
 
-        <!-- new: Search input -->
-        <input type="text" id="search-input" placeholder="Search tasks...">
-        
-        <div id="filter-buttons">
-            <button id="all-btn">All</button>
-            <button id="completed-btn">Completed</button>
-            <button id="pending-btn">Pending</button>
-        </div>
-        
-        <div id="task-counter">
-            <p id="total-count">Total: 0</p>
-            <p id="completed-count">Completed: 0</p>
-            <p id="pending-count">Pending: 0</p>
+            <button id="daily-tab" class="tab-btn active" type="button">
+                Daily Tasks
+            </button>
+
+            <button id="monthly-tab" class="tab-btn" type="button">
+                Monthly Tasks
+            </button>
+
         </div>
 
-        <!-- Existing Task List -->
-        <ul id="task-list"></ul>
-        
-        <p id="message"></p>
-        
+
+        <!-- DAILY TASKS SECTION -->
+        <section id="daily-section" class="task-section active">
+
+            <h2>Daily Tasks</h2>
+
+            <!-- Daily Task Input Form -->
+            <form id="daily-form">
+
+                <input
+                    type="text"
+                    id="daily-input"
+                    placeholder="Enter a daily task..."
+                >
+
+                <button type="submit">Add Task</button>
+
+            </form>
+
+            <!-- Search Daily Tasks -->
+            <input
+                type="text"
+                id="daily-search"
+                placeholder="Search daily tasks..."
+            >
+
+            <!-- Daily Task Filters -->
+            <div id="daily-filter-buttons">
+
+                <button type="button" id="daily-all-btn">All</button>
+
+                <button type="button" id="daily-completed-btn">
+                    Completed
+                </button>
+
+                <button type="button" id="daily-pending-btn">
+                    Pending
+                </button>
+
+            </div>
+
+            <!-- Daily Task Counter -->
+            <div id="daily-counter">
+
+                <p id="daily-total-count">Total: 0</p>
+
+                <p id="daily-completed-count">Completed: 0</p>
+
+                <p id="daily-pending-count">Pending: 0</p>
+
+            </div>
+
+            <!-- Daily Tasks List -->
+            <ul id="daily-task-list"></ul>
+
+            <!-- Daily Messages -->
+            <p id="daily-message"></p>
+
+        </section>
+
+
+        <!-- MONTHLY TASKS SECTION -->
+        <section id="monthly-section" class="task-section">
+
+            <h2>Monthly Tasks</h2>
+
+            <!-- Monthly Task Input Form -->
+            <form id="monthly-form">
+
+                <input
+                    type="text"
+                    id="monthly-input"
+                    placeholder="Enter a monthly task..."
+                >
+
+                <button type="submit">Add Task</button>
+
+            </form>
+
+            <!-- Search Monthly Tasks -->
+            <input
+                type="text"
+                id="monthly-search"
+                placeholder="Search monthly tasks..."
+            >
+
+            <!-- Monthly Task Filters -->
+            <div id="monthly-filter-buttons">
+
+                <button type="button" id="monthly-all-btn">All</button>
+
+                <button type="button" id="monthly-completed-btn">
+                    Completed
+                </button>
+
+                <button type="button" id="monthly-pending-btn">
+                    Pending
+                </button>
+
+            </div>
+
+            <!-- Monthly Task Counter -->
+            <div id="monthly-counter">
+
+                <p id="monthly-total-count">Total: 0</p>
+
+                <p id="monthly-completed-count">Completed: 0</p>
+
+                <p id="monthly-pending-count">Pending: 0</p>
+
+            </div>
+
+            <!-- Monthly Tasks List -->
+            <ul id="monthly-task-list"></ul>
+
+            <!-- Monthly Messages -->
+            <p id="monthly-message"></p>
+
+        </section>
+
     </div>
-    
+
 </body>
+
 </html>

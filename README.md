@@ -1,6 +1,6 @@
 # 🚀 Task Manager App
 
-A responsive and user-friendly **Task Manager Web Application** built using HTML, CSS, and JavaScript. It helps users organize daily tasks, track progress, and manage productivity efficiently.
+A responsive and user-friendly **Task Manager Web Application** built using HTML, CSS, and JavaScript. It helps users organize their tasks, manage daily and monthly goals, track progress, and improve productivity efficiently.
 
 ## 🌐 Live Demo
 
@@ -8,11 +8,23 @@ A responsive and user-friendly **Task Manager Web Application** built using HTML
 
 ## ✨ Features
 
+### 📋 Task Management
+
 * ➕ Add new tasks
 * ✏️ Edit existing tasks
 * 🗑️ Delete tasks
 * ✅ Mark tasks as completed or pending
-* 🔍 Search tasks
+
+### 📅 Daily & Monthly Tasks
+
+* ☀️ Add and manage daily tasks
+* 📆 Add and manage monthly tasks
+* 🗂️ Organize tasks according to their time period
+* 📊 Track daily and monthly task progress
+
+### 🔍 Productivity & Tracking
+
+* 🔎 Search tasks
 * 📋 Filter tasks (All, Completed, Pending)
 * 🔢 Task counter
 * 💾 LocalStorage for data persistence
@@ -22,7 +34,7 @@ A responsive and user-friendly **Task Manager Web Application** built using HTML
 
 * **HTML5** – Application structure
 * **CSS3** – Styling and responsive layout
-* **JavaScript** – Functionality and DOM manipulation
+* **JavaScript (ES6+)** – Application logic, event handling, and DOM manipulation
 * **LocalStorage** – Persistent task storage
 
 ## 📂 Project Structure
@@ -58,3 +70,4 @@ Task-Manager/
 ---
 
 ⭐ If you find this project useful, consider giving it a star!
+
