@@ -27,18 +27,22 @@ A responsive and user-friendly **Task Manager Web Application** built using HTML
 
 ## 📂 Project Structure
 
+```text
 Task-Manager/
 │
 ├── index.html
 ├── style.css
 ├── script.js
 └── README.md
+```
 
 ## ⚙️ Run Locally
 
 1. Clone the repository:
 
+   ```bash
    git clone https://github.com/ayanmohammad1020-oss/Task-Manager.git
+   ```
 
 2. Open the project folder in VS Code.
 
@@ -51,5 +55,6 @@ Task-Manager/
 * GitHub: [ayanmohammad1020-oss](https://github.com/ayanmohammad1020-oss)
 * LinkedIn: [Mohammad Ayan](https://linkedin.com/in/mohammadayan20)
 
+---
 
 ⭐ If you find this project useful, consider giving it a star!
